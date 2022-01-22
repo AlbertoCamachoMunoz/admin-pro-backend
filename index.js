@@ -4,20 +4,23 @@ const express = require('express');
 const { dbConnection } = require('./database/config.js');
 const cors = require('cors');
 
-// iniciar servidor
+// Iniciar servidor
 const app = express();
+
+// Configurar Cors
 app.use(cors());
 
-// BAse de datos
+// Lectura y parseo del body colocar antes de las rutas
+app.use( express.json());
+
+// Base de datos
 dbConnection();
 
-// Rutas
-app.get('/', (req,res) => {
-    res.json({
-        ok: true,
-        msg: 'hola mundo'
-    })
-})
+// rutas
+app.use('/api/usuarios', require('./routes/usuarios'));
+
+
+
 // mean_user
 // ztaPV37NRwZPKVq7
 
