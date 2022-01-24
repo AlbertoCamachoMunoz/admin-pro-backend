@@ -1,7 +1,9 @@
 
-const Usuario = require('../models/usuarios.js')
 const bcrypt = require('bcryptjs');
 const { response } = require('express');
+const Usuario = require('../models/usuarios.js')
+const { generateJWT } = require('../helpers/jwt')
+
 
 const getUsuarios = async(req, res) => {
 
@@ -34,17 +36,21 @@ const crearUsuario = async (req, res = response) => {
         usuario.password = bcrypt.hashSync(password, salt);
         
         await usuario.save();
+        const token = await generateJWT(usuario.id);
+
 
         res.json({
             ok: true,
+            token,
             usuario
+            
         })
 
     } catch (error) {
         console.log(error);
         res.status(500).json({
             ok: false,
-            msg: 'Error en la consulta'
+            msg: 'Error en la consulta create'
         })
     }
 
@@ -93,11 +99,44 @@ const updateUsuario = async (req, res = response) => {
         console.log(error);
         res.status(500).json({
             ok: false,
-            msg: 'Error en la consulta'
+            msg: 'Error en la consulta update'
         })
     }
 
+}
 
+const deleteUsuario = async (req, res = response) => {
+
+    const uid = req.params.uid;
+    console.log(uid);
+
+    try {
+
+        const usuarioDb = await Usuario.findById(uid);
+
+        if (!usuarioDb) {
+            return res.status(400).json({
+                ok: false,
+                msg: 'Usuario no existe con ese uid'
+            })
+        }
+
+
+        const deleteUsuario = await Usuario.findByIdAndDelete(uid);
+
+
+        res.json({
+            ok: true,
+            deleteUsuario
+        })
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            ok: false,
+            msg: 'Error en la consulta delete'
+        })
+    }
 
 }
 
@@ -105,5 +144,6 @@ const updateUsuario = async (req, res = response) => {
 module.exports = {
     getUsuarios,
     crearUsuario,
-    updateUsuario
+    updateUsuario,
+    deleteUsuario
 }
