@@ -49,6 +49,3 @@ const login = async (req, res = response) => {
 module.exports = {
     login
 }
-// revert 1
-// revert 2
-
