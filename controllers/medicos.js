@@ -1,20 +1,20 @@
 
 const bcrypt = require('bcryptjs');
 const { response } = require('express');
-const Usuario = require('../models/usuario.js')
+const Medico = require('../models/medico.js')
 const { generateJWT } = require('../helpers/jwt')
 
 
-const getUsuarios = async(req, res = response) => {
+const getMedicos = async(req, res = response) => {
 
-    const usuario = await Usuario.find({}, 'nombre email rol google');
+    const medico = await Medico.find({}, 'nombre usuario');
     res.json({
         ok: true,
-        usuario
+        medico
     })
 }
 
-const crearUsuario = async (req, res = response) => {
+const crearMedico = async (req, res = response) => {
 
     const { email, password, nombre } = req.body;
     console.log(req.body);
@@ -22,27 +22,27 @@ const crearUsuario = async (req, res = response) => {
 
     try {
 
-        const existeUsuario = await Usuario.findOne({ email });
-        if (existeUsuario) {
+        const existeMedico = await Medico.findOne({ email });
+        if (existeMedico) {
             return res.status(400).json({
                 ok: false,
-                msg: 'Correo ya existe usuairo'
+                msg: 'Correo ya existe medico'
             })
         }
         
-        const usuario = new Usuario(req.body);
+        const medico = new Medico(req.body);
 
         const salt = bcrypt.genSaltSync();
-        usuario.password = bcrypt.hashSync(password, salt);
+        medico.password = bcrypt.hashSync(password, salt);
         
-        await usuario.save();
-        const token = await generateJWT(usuario.id);
+        await medico.save();
+        const token = await generateJWT(medico.id);
 
 
         res.json({
             ok: true,
             token,
-            usuario
+            medico
             
         })
 
@@ -50,91 +50,91 @@ const crearUsuario = async (req, res = response) => {
         console.log(error);
         res.status(500).json({
             ok: false,
-            msg: 'Error en la consulta create usuairo'
+            msg: 'Error en la consulta create medico'
         })
     }
 
 }
 
 // TODO: vALIDAR TOKEN
-const updateUsuario = async (req, res = response) => {
+const updateMedico = async (req, res = response) => {
 
     const uid = req.params.uid;
 
     try {
 
-        const usuarioDb = await Usuario.findById(uid);
+        const medicoDb = await Medico.findById(uid);
 
-        if (!usuarioDb) {
+        if (!medicoDb) {
             return res.status(400).json({
                 ok: false,
-                msg: 'Usuario no existe con ese uid usuairo'
+                msg: 'Medico no existe con ese uid'
             })
         }
 
         // Update
         const { password, google, email, ...campos } = req.body;
 
-        if (usuarioDb.email !== email) {
-            const existeUsuario = await Usuario.findOne({ email })
-            if (existeUsuario) {
+        if (medicoDb.email !== email) {
+            const existeMedico = await Medico.findOne({ email })
+            if (existeMedico) {
                 return res.status(400).json({
                     ok: false,
-                    msg: 'Correo ya existe usuairo'
+                    msg: 'Correo ya existe medico'
                 })
             }
             // solo si son distintos lo añadimos
             campos.email = email;
         }
 
-        const updateUsuario = await Usuario.findByIdAndUpdate(uid, campos, {new: true});
+        const updateMedico = await medico.findByIdAndUpdate(uid, campos, {new: true});
 
 
         res.json({
             ok: true,
-            updateUsuario
+            updateMedico
         })
 
     } catch (error) {
         console.log(error);
         res.status(500).json({
             ok: false,
-            msg: 'Error en la consulta update usuairo'
+            msg: 'Error en la consulta update medico'
         })
     }
 
 }
 
-const deleteUsuario = async (req, res = response) => {
+const deleteMedico = async (req, res = response) => {
 
     const uid = req.params.uid;
     console.log(uid);
 
     try {
 
-        const usuarioDb = await Usuario.findById(uid);
+        const medicoDb = await Medico.findById(uid);
 
-        if (!usuarioDb) {
+        if (!medicoDb) {
             return res.status(400).json({
                 ok: false,
-                msg: 'Usuario no existe con ese uid usuairo'
+                msg: 'Medico no existe con ese uid'
             })
         }
 
 
-        const deleteUsuario = await Usuario.findByIdAndDelete(uid);
+        const deleteMedico = await Medico.findByIdAndDelete(uid);
 
 
         res.json({
             ok: true,
-            deleteUsuario
+            deleteMedico
         })
 
     } catch (error) {
         console.log(error);
         res.status(500).json({
             ok: false,
-            msg: 'Error en la consulta delete usuairo'
+            msg: 'Error en la consulta delete medico'
         })
     }
 
@@ -142,8 +142,8 @@ const deleteUsuario = async (req, res = response) => {
 
 
 module.exports = {
-    getUsuarios,
-    crearUsuario,
-    updateUsuario,
-    deleteUsuario
+    getMedicos,
+    crearMedico,
+    updateMedico,
+    deleteMedico
 }
