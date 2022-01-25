@@ -6,11 +6,25 @@ const { generateJWT } = require('../helpers/jwt')
 
 
 const getUsuarios = async(req, res = response) => {
+    // paginacion desde url http://localhost:3000/api/usuarios?desde=5
+    const desde = Number(req.query.desde) || 0;
+    console.log(desde);
 
-    const usuario = await Usuario.find({}, 'nombre email rol google');
+
+    // puedes aglutinar un array de promesas y se espera a que acaben todas
+    const [ usuarios, total ] = await Promise.all([
+        Usuario
+            .find({}, 'nombre email rol google')
+            .skip(desde)
+            .limit(5),
+        
+        Usuario.count()
+    ])
+
     res.json({
         ok: true,
-        usuario
+        usuarios,
+        total
     })
 }
 

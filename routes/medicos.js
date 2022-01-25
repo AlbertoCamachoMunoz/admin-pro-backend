@@ -15,7 +15,11 @@ const router = Router();
 router.get('/', validarJWT, getMedicos);
 router.post(
     '/',
-    [       
+    [   
+        validarJWT,
+        check('nombre', 'El nombre del medico es necesario').not().isEmpty(),
+        check('hospital', 'El id del hospital es necesario').isMongoId(),
+        validarCampos
     ],
     crearMedico
 );

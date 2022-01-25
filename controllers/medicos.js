@@ -7,7 +7,10 @@ const { generateJWT } = require('../helpers/jwt')
 
 const getMedicos = async(req, res = response) => {
 
-    const medico = await Medico.find({}, 'nombre usuario');
+    const medico = await Medico
+                            .find()
+                            .populate('hospital', 'nombre _id')
+                            .populate('usuario', 'nombre email')
     res.json({
         ok: true,
         medico
@@ -16,33 +19,26 @@ const getMedicos = async(req, res = response) => {
 
 const crearMedico = async (req, res = response) => {
 
-    const { email, password, nombre } = req.body;
-    console.log(req.body);
+    const uid = req.uid;
+    const { id_hospital, nombre } = req.body;
     
+    const medico = new Medico({
+        usuario: uid,
+        hospital: id_hospital,
+        ...req.body
+    });
+
+    console.log('medico', medico);
 
     try {
 
-        const existeMedico = await Medico.findOne({ email });
-        if (existeMedico) {
-            return res.status(400).json({
-                ok: false,
-                msg: 'Correo ya existe medico'
-            })
-        }
         
-        const medico = new Medico(req.body);
-
-        const salt = bcrypt.genSaltSync();
-        medico.password = bcrypt.hashSync(password, salt);
-        
-        await medico.save();
-        const token = await generateJWT(medico.id);
+        const medicoDB = await medico.save();
 
 
         res.json({
             ok: true,
-            token,
-            medico
+            medicoDB
             
         })
 
