@@ -10,22 +10,30 @@ const getUsuarios = async(req, res = response) => {
     const desde = Number(req.query.desde) || 0;
     console.log(desde);
 
+    try{
+        // puedes aglutinar un array de promesas y se espera a que acaben todas
+        const [ usuarios, total ] = await Promise.all([
+            Usuario
+                .find({}, 'nombre email rol google')
+                .skip(desde)
+                .limit(5),
+            
+            Usuario.count()
+        ])
 
-    // puedes aglutinar un array de promesas y se espera a que acaben todas
-    const [ usuarios, total ] = await Promise.all([
-        Usuario
-            .find({}, 'nombre email rol google')
-            .skip(desde)
-            .limit(5),
-        
-        Usuario.count()
-    ])
+        res.json({
+            ok: true,
+            usuarios,
+            total
+        })
 
-    res.json({
-        ok: true,
-        usuarios,
-        total
-    })
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            ok: false,
+            msg: 'Error en la consulta create usuairo'
+        })
+    }
 }
 
 const crearUsuario = async (req, res = response) => {
