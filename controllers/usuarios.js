@@ -14,7 +14,7 @@ const getUsuarios = async(req, res = response) => {
         // puedes aglutinar un array de promesas y se espera a que acaben todas
         const [ usuarios, total ] = await Promise.all([
             Usuario
-                .find({}, 'nombre email rol google')
+                .find({}, 'nombre email rol google img')
                 .skip(desde)
                 .limit(5),
             
