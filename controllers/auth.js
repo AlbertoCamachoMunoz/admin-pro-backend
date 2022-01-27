@@ -66,11 +66,9 @@ const googleSignIn = async (req, res = response) => {
                 password: '@@@',
                 google:true
             })
-            console.log('nuevo');
         } else {
             usuario = usuarioDB;
             usuario.google = true;
-            console.log('update');
         }
 
         await usuario.save();
