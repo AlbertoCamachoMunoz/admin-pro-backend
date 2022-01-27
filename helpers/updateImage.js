@@ -9,17 +9,17 @@ const updateImage = async (type, id, nombreArchivo) => {
     console.log('dentro de helper');
 
     switch (type) {
-        
+
         case 'medicos':
-            await saveDataBase( Medico, 'medicos', id, nombreArchivo )
+            await saveImgDataBase( Medico, 'medicos', id, nombreArchivo )
             break;
         
         case 'hospitales':
-            await saveDataBase( Hospital, 'hospitales', id, nombreArchivo )
+            await saveImgDataBase( Hospital, 'hospitales', id, nombreArchivo )
             break;
         
         case 'usuarios':
-            await saveDataBase( Medico, 'usuarios', id, nombreArchivo )
+            await saveImgDataBase( Medico, 'usuarios', id, nombreArchivo )
             break;
             
         default:
@@ -29,7 +29,7 @@ const updateImage = async (type, id, nombreArchivo) => {
 
 };
 
-const saveDataBase = async (Entity, name,  id, nombreArchivo) => {
+const saveImgDataBase = async (Entity, name,  id, nombreArchivo) => {
     
     const entity = await Entity.findById(id)
     const pathViejo = `./uploads/${name}/${entity.img}`;
