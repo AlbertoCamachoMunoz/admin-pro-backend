@@ -24,14 +24,15 @@ router.post(
 );
 
 router.put(
-    '/:uid',
+    '/:id',
     [
         // validador middelware
+        check('nombre', 'El nombre del hospital es necesario').not().isEmpty(),
         validarJWT,
     ],
     updateHospital
 );
 
-router.delete( '/:uid',validarJWT, deleteHospital);
+router.delete( '/:id',validarJWT, deleteHospital);
 
 module.exports = router;

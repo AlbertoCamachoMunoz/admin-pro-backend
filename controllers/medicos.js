@@ -55,36 +55,27 @@ const crearMedico = async (req, res = response) => {
 // TODO: vALIDAR TOKEN
 const updateMedico = async (req, res = response) => {
 
-    const uid = req.params.uid;
+    const id = req.params.id;
+    const uid = req.uid;
 
     try {
 
-        const medicoDb = await Medico.findById(uid);
+        const medicoDb = await Medico.findById(id);
 
         if (!medicoDb) {
             return res.status(400).json({
                 ok: false,
-                msg: 'Medico no existe con ese uid'
+                msg: 'Medico no existe con ese id'
             })
         }
 
         // Update
-        const { password, google, email, ...campos } = req.body;
-
-        if (medicoDb.email !== email) {
-            const existeMedico = await Medico.findOne({ email })
-            if (existeMedico) {
-                return res.status(400).json({
-                    ok: false,
-                    msg: 'Correo ya existe medico'
-                })
-            }
-            // solo si son distintos lo añadimos
-            campos.email = email;
+        const cambiosMedico = {
+            ...req.body,
+            usuario: uid,
         }
 
-        const updateMedico = await medico.findByIdAndUpdate(uid, campos, {new: true});
-
+        const updateMedico = await Medico.findByIdAndUpdate(id, cambiosMedico, {new: true});
 
         res.json({
             ok: true,
@@ -103,22 +94,21 @@ const updateMedico = async (req, res = response) => {
 
 const deleteMedico = async (req, res = response) => {
 
-    const uid = req.params.uid;
-    console.log(uid);
+    const id = req.params.id;
+    console.log(id);
 
     try {
 
-        const medicoDb = await Medico.findById(uid);
+        const medicoDb = await Medico.findById(id);
 
         if (!medicoDb) {
             return res.status(400).json({
                 ok: false,
-                msg: 'Medico no existe con ese uid'
+                msg: 'Medico no existe con ese id'
             })
         }
 
-
-        const deleteMedico = await Medico.findByIdAndDelete(uid);
+        const deleteMedico = await Medico.findByIdAndDelete(id);
 
 
         res.json({
