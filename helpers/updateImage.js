@@ -19,7 +19,7 @@ const updateImage = async (type, id, nombreArchivo) => {
             break;
         
         case 'usuarios':
-            await saveImgDataBase( Medico, 'usuarios', id, nombreArchivo )
+            await saveImgDataBase( Usuario, 'usuarios', id, nombreArchivo )
             break;
             
         default:

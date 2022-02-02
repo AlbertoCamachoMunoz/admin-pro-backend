@@ -90,7 +90,7 @@ const updateUsuario = async (req, res = response) => {
         if (!usuarioDb) {
             return res.status(400).json({
                 ok: false,
-                msg: 'Usuario no existe con ese uid usuairo'
+                msg: 'Usuario no existe con ese uid usuario'
             })
         }
 

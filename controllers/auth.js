@@ -91,13 +91,32 @@ const googleSignIn = async (req, res = response) => {
 const renewToken = async(req, res = response) => {
 
     const uid = req.uid;
+    try {
 
-    const token = await generateJWT(uid);
+        const token = await generateJWT(uid);
 
-    res.json({
-        ok: true,
-        token
-    })
+        const usuarioDb = await Usuario.findById(uid);
+
+        if (!usuarioDb) {
+            return res.status(400).json({
+                ok: false,
+                msg: 'Usuario no existe con ese uid usuario'
+            })
+        }
+
+        res.json({
+            ok: true,
+            token,
+            usuarioDb
+        })
+
+    } catch (error) {
+        res.status(401).json({
+            ok: false,
+            msg: 'Token NO RENOVADO'
+        })
+    }
+
 }
 
 module.exports = {
