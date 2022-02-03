@@ -16,7 +16,7 @@ router.use(expressFileUpload());
 
 // Rutas
 router.put('/:type/:id', validarJWT, fileUploads);
-router.get('/:type/:img', validarJWT, fileDownload);
+router.get('/:type/:img', fileDownload);
 
 
 
