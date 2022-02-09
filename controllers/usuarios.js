@@ -106,7 +106,7 @@ const updateUsuario = async (req, res = response) => {
                 })
             }
             // solo si son distintos lo añadimos
-            campos.email = email;
+            if(!usuarioDb.google) campos.email = email;
         }
 
         const updateUsuario = await Usuario.findByIdAndUpdate(uid, campos, {new: true});
